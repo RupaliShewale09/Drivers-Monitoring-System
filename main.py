@@ -26,7 +26,6 @@ def stop_sound():
 #---------------------------------------------------------------------------------------------
 cap = cv2.VideoCapture(0) 
 
-# cap.open(address)
 
 if not cap.isOpened():
     print("Error: Could not open webcam.")
