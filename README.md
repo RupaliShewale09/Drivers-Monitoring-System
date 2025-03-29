@@ -32,7 +32,7 @@ scipy==1.13.1
 
 To install all dependencies at once, run:
 ```bash
-pip install -r requirements.txt
+pip install -r requirement.txt
 ```
 
 ## 📂 Project Structure
