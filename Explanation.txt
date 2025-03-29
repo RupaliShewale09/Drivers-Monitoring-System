@@ -1,0 +1,104 @@
+opencv  --> Capturing video from webcam
+scipy.spacial  --> computation of EAR distance
+dlib  --> contains tools for facial recognition, landmark detection,  object tracking
+imutils  --> resize frame
+
+pygame --> external audio or buzzer 
+pyttsx3 --> text to speech 
+---------------------------------------------------------------------------------------------
+CAPTURING LIVE VIDEO
+
+1. Open the webcam
+
+2. Detects faces in real time using Dlib's face detector
+
+3.Draws a green rectangle around detected faces.
+    cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
+        (x1, y1): Top-left corner of the rectangle.
+        (x2, y2): Bottom-right corner of the rectangle.
+        (0, 255, 0): Green color (BGR format).
+        2: Thickness of the rectangle border.
+
+4. Predictor: Predicts 68 facial landmark points.
+
+5. Converts the detected landmarks from Dlib's format to a array.
+    landmarks = face_utils.shape_to_np(landmarks)
+
+6. Draw landmarks : each point using circle
+    Loops through all 68 landmark points.
+    (x, y) = landmarks[n]: Gets the x and y coordinates of each landmark.
+    cv2.circle(frame, (x, y), 1, (255, 255, 255), -1):
+        (255, 255, 255) : white dot
+        1: Radius of the circle.
+        -1: Fills the circle completely.
+
+7. EAR and MAR calculate
+
+8. Drowsiness conditions
+
+9. Displays the processed video.
+10. Exits when the user presses 'q'.
+
+
+---------------------------------------------------------------------------------------------
+68 landmarks of dlib face detector
+
+  Jawline:      0 - 16
+  Eyebrows:   L 17 - 21   R 22 - 26
+  Nose:         27 - 30     31 - 35
+  Eyes:       L 36 - 41   R 42 - 47
+  Lips:       O 48 - 59   I 60 - 67
+
+---------------------------------------------------------------------------------------------
+EYE ASPECT RATIO
+
+Eye Landmarks: 
+P1	eye[0]	Leftmost corner     36  &  42
+P2	eye[1]	Upper-left          37  &  43
+P3	eye[2]	Upper-middle        38  &  44
+P4	eye[3]	Rightmost corner    39  &  45
+P5	eye[4]	Lower-middle        40  &  46
+P6	eye[5]	Lower-left          41  &  47
+
+vertical distance:
+A = P2 - P6
+B = P3 - P5   
+horizontal distance:
+C = P1 - P4
+
+EAR = vertical dist / (2 * horizontal dist) 
+    = (A + B) / (2.0 * C) 
+
+---------------------------------------------------------------------------------------------
+
+if ear <= 0.23
+    - start the timing
+    - calculate elapsed time = current time - start time
+    if elapsed time >= 5 sec then SLEEPING
+    else (time < 5) then DROWSY
+else ACTIVE
+
+---------------------------------------------------------------------------------------------
+MOUTH ASPECT RATIO
+
+inner mouth Landmarks: 
+P1  mouth[0]  60 
+P2  mouth[1]  61
+P3  mouth[2]  62
+P4  mouth[3]  63
+P5  mouth[4]  64
+P6  mouth[5]  65
+P7  mouth[6]  66
+P8  mouth[7]  67
+
+vertical distance 
+A = 61 - 67 = P2 - P8 = mouth[1] - mouth[7]
+B = 62 - 66 = P3 - P7 = mouth[2] - mouth[6]
+C = 63 - 65 = P4 - P6 = mouth[3] - mouth[5]
+horizontal
+D = 60 - 64 = P1 - P5 = mouth[0] - mouth[4]
+
+mar = (A + B + C)/(3.0 * D)
+
+if mar > 0.35  then YAWNING
+---------------------------------------------------------------------------------------------
