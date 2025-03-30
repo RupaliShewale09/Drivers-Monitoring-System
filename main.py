@@ -157,10 +157,10 @@ while True:
 
 #Fetch and print database records when exiting
 print("\nFetching stored drowsiness events:\n")
-logs = db.fetch_logs()  # Assuming fetch_events() is implemented in SQL.py
+logs = db.fetch_logs()  
 
 for log in logs:
-    print(log)  # Print each record
+    print(log) 
 
 cap.release()
 db.close_connection()
