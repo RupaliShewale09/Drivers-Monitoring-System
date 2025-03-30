@@ -10,6 +10,10 @@ from EAR import eye_aspect_ratio
 from MAR import mouth_aspect_ratio
 from headpose import get_yaw_angle
 
+from SQL import DrowsinessDatabase 
+
+db = DrowsinessDatabase()
+
 # SOUNDS AND ALERTS --------------------------------------------------------------------------
 engine = pyttsx3.init()
 voices = engine.getProperty('voices')       #getting details of current voice
@@ -26,6 +30,7 @@ def stop_sound():
 #---------------------------------------------------------------------------------------------
 cap = cv2.VideoCapture(0) 
 
+# cap.open(address)
 
 if not cap.isOpened():
     print("Error: Could not open webcam.")
@@ -44,8 +49,6 @@ YAW_THRESHOLD = 30  # Yaw angle limit for distraction
 DISTRACTION_DURATION = 5.0  # Time (seconds) before triggering alert
 distraction_start_time = None  # Timer for tracking distraction
 
-status = ""
-color=(0,0,0)
 start_time = None
 
 while True:
@@ -56,6 +59,9 @@ while True:
 
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     faces = detector(gray)
+    
+    status = "Active:)"
+    color = (0, 255, 0)
 
     face_frame = frame.copy()
     
@@ -137,7 +143,10 @@ while True:
             status = "Active:)"
             color = (0, 255, 0)
             stop_sound() 
-    
+
+        if status != "Active:)":
+            db.log_drowsiness(round(avg_ear, 4), round(mar, 4), round(yaw_angle, 4), status)
+        
         cv2.putText(face_frame, status, (100,50), cv2.FONT_HERSHEY_SIMPLEX, 1.2, color, 3)        
         #------------------------------------------------------------------------------- 
     cv2.imshow("Landmark Detection",frame)
@@ -146,5 +155,14 @@ while True:
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
+#Fetch and print database records when exiting
+print("\nFetching stored drowsiness events:\n")
+logs = db.fetch_logs()  # Assuming fetch_events() is implemented in SQL.py
+
+for log in logs:
+    print(log)  # Print each record
+
 cap.release()
+db.close_connection()
 cv2.destroyAllWindows()
+
