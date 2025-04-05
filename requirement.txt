@@ -5,4 +5,5 @@ opencv-python==4.11.0.86
 pygame==2.6.1
 pyttsx3==2.98
 scipy==1.13.1
-
+sqlite3
+tk
