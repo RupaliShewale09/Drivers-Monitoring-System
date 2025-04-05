@@ -53,8 +53,6 @@ pip install -r requirement.txt
 
 This project uses dlib's 68-point facial landmark predictor.
 
-🔗 Download link:http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2
-
 📌 After downloading:                                          
 Extract the .bz2 file to get shape_predictor_68_face_landmarks.dat                                    
 Place it in the root directory of this project.                                    
