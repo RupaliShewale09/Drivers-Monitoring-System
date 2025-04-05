@@ -1,15 +1,20 @@
 import sqlite3
-from datetime import datetime
+from datetime import datetime, date  
 
 class DrowsinessDatabase:
     def __init__(self, db_name="drowsiness_logs.db"):
-        self.conn = sqlite3.connect(db_name) 
+        self.db_name = db_name
+        self.conn = sqlite3.connect(db_name)
         self.cursor = self.conn.cursor()
-        self.create_table()
+        self.table_name = self.get_today_table_name()
+        self.create_table_for_today()
 
-    def create_table(self):
-        # Create the table for logging drowsiness events
-        self.cursor.execute('''CREATE TABLE IF NOT EXISTS drowsiness_events (
+    def get_today_table_name(self):
+        today = datetime.now().strftime("%Y_%m_%d")
+        return f"drowsiness_{today}"
+
+    def create_table_for_today(self):
+        self.cursor.execute(f'''CREATE TABLE IF NOT EXISTS {self.table_name} (
                                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                                 timestamp TEXT,
                                 ear REAL,
@@ -18,16 +23,20 @@ class DrowsinessDatabase:
                                 status TEXT)''')
         self.conn.commit()
 
-    def log_drowsiness(self, ear, mar,yaw_angle, status):
-        # Insert a drowsiness event into the database
+    def log_drowsiness(self, ear, mar, yaw_angle, status):
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        
         self.cursor.execute("INSERT INTO drowsiness_events (timestamp, ear, mar, yaw_angle, status) VALUES (?, ?, ?, ?, ?)",
+                           (timestamp, ear, mar, yaw_angle, status))
+        self.conn.commit()
+        
+        self.cursor.execute(f"INSERT INTO {self.table_name} (timestamp, ear, mar, yaw_angle, status) VALUES (?, ?, ?, ?, ?)",
                             (timestamp, ear, mar, yaw_angle, status))
         self.conn.commit()
 
-    def fetch_logs(self):
-        self.cursor.execute("SELECT * FROM drowsiness_events")
-        return self.cursor.fetchall()  # Returns list of tuples
+    def fetch_today_logs(self):
+        self.cursor.execute(f"SELECT * FROM {self.table_name}")
+        return self.cursor.fetchall()
 
     def close_connection(self):
         self.conn.close()
