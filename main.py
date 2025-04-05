@@ -11,6 +11,7 @@ from MAR import mouth_aspect_ratio
 from headpose import get_yaw_angle
 
 from SQL import DrowsinessDatabase 
+from displayDB import launch_viewer
 
 db = DrowsinessDatabase()
 
@@ -155,12 +156,7 @@ while True:
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
-#Fetch and print database records when exiting
-print("\nFetching stored drowsiness events:\n")
-logs = db.fetch_logs()  
-
-for log in logs:
-    print(log) 
+launch_viewer(show_today=True) 
 
 cap.release()
 db.close_connection()
