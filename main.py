@@ -46,8 +46,8 @@ HIGH_DURATION = 7.0
 
 MAR_THRESHOLD = 0.40
 
-YAW_THRESHOLD = 30  # Yaw angle limit for distraction
-DISTRACTION_DURATION = 5.0  # Time (seconds) before triggering alert
+YAW_THRESHOLD = 25  # Yaw angle limit for distraction
+DISTRACTION_DURATION = 3.0  # Time (seconds) before triggering alert
 distraction_start_time = None  # Timer for tracking distraction
 
 start_time = None
@@ -136,7 +136,7 @@ while True:
             elif time.time() - distraction_start_time >= DISTRACTION_DURATION:
                 status = "Distracted!"
                 color = (200, 100, 255)
-                engine.say("Focus on the Driving!")
+                engine.say("Distracted!!")
                 engine.runAndWait()    
         else:
             start_time = None 
