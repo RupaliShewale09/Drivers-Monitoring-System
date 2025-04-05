@@ -8,10 +8,21 @@ class DrowsinessDatabase:
         self.cursor = self.conn.cursor()
         self.table_name = self.get_today_table_name()
         self.create_table_for_today()
+        self.create_events_table()
 
     def get_today_table_name(self):
         today = datetime.now().strftime("%Y_%m_%d")
         return f"drowsiness_{today}"
+
+    def create_events_table(self):
+        self.cursor.execute('''CREATE TABLE IF NOT EXISTS drowsiness_events (
+                                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                                timestamp TEXT,
+                                ear REAL,
+                                mar REAL,
+                                yaw_angle REAL,
+                                status TEXT)''')
+        self.conn.commit()
 
     def create_table_for_today(self):
         self.cursor.execute(f'''CREATE TABLE IF NOT EXISTS {self.table_name} (
